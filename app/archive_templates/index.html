@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    {% if form %}
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.post.label }}<br>
+            {{ form.post(cols=32, rows=4) }}<br>
+            {% for error in form.post.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    {% endif %}
+    {% for post in posts %}
+        {% include '_post.html' %}
+    {% endfor %}
+    {% if prev_url %}
+    <a href="{{ prev_url }}">Newer posts</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">Older posts</a>
+    {% endif %}
+{% endblock %}
+
+
+
+<!--  
+
+The IF form argument recieves the POSTFORM that is rendered when the logged in user is on his or her own blog page.
+This template is used for two view functions (index & explore). The index function contains the form, explore doesn't.
+
+Jinja2 template inheritance allows for this template to be passed into the base template
+
+the block control statement to define the place where the derived templates can insert themselves. Blocks are given a unique name, which derived templates can reference when they provide their content.
+
+The render_template() function invokes the Jinja2 template engine that comes bundled 
+with the Flask framework. Jinja2 substitutes blocks in the template with the 
+corresponding values and control statements, given by the arguments provided in the render_template() call.
+-->

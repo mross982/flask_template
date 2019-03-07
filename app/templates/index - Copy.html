@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Bayes Theorem</h1>
+
+
+    <body id="page-top">
+
+    <header>
+        <div>
+            <h1>Bayes Budgeting</h1>
+            <p>Creating Statistical Models for Budgetary Quality Measure Evaluation</p>
+        </div>
+    </header>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div>
+                    <h1>Quality Measures</h1>
+                    <p>Information about quality measures</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div>
+                    <h1>Bayes Theorem</h1>
+                    <p>Information about Bayes Theorem</p>
+                </div>
+            </div>
+        </div>
+    </section>     
+        
+{% endblock %}
+
+
+
+<!--  
+
+Full Template found https://startbootstrap.com/templates/scrolling-nav/
+
+The IF form argument recieves the POSTFORM that is rendered when the logged in user is on his or her own blog page.
+This template is used for two view functions (index & explore). The index function contains the form, explore doesn't.
+
+Jinja2 template inheritance allows for this template to be passed into the base template
+
+the block control statement to define the place where the derived templates can insert themselves. Blocks are given a unique name, which derived templates can reference when they provide their content.
+
+The render_template() function invokes the Jinja2 template engine that comes bundled 
+with the Flask framework. Jinja2 substitutes blocks in the template with the 
+corresponding values and control statements, given by the arguments provided in the render_template() call.
+-->
