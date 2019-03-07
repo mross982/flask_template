@@ -123,6 +123,20 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+
+@app.route('/measure_setup', methods=['GET', 'POST'])
+@login_required
+def measure_setup():
+    form = MeasureSetupForm()
+    if form.validate_on_submit():
+        measure = Measure(name=form.name.data, user_id=current_user.id, individual_unit=form.individual_unit.data, start_date=form.start_date.data,
+            end_date=form.end_date.data, positive_direction=form.positive_direction.data, location=form.location.data)
+        db.session.add(measure)
+        db.session.commit()
+        flash('Measure Added!')
+        return redirect(url_for('index'))
+    return render_template('measure_setup.html', title='Set up a Measure', form=form)
+
 '''
 When a route has a dynamic component (e.g. <>), Flask will accept any text in that portion 
 of the URL, and will invoke the view function with the actual text as an argument. For 

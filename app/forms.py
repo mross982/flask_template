@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
     TextAreaField
+from wtforms.fields.html5 import DateField  
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length
 from app.models import User
@@ -30,6 +31,21 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+
+class MeasureSetupForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    individual_unit = RadioField('Unit of Measure', choices=[(True: 'Individuals'), (False: 'Encounters')])
+    start_date = DateField('Measurement Period Start Date', format='%Y-%m-%d')
+    end_date = DateField('Measurement Period End Date', format='%Y-%m-%d')
+    positive_direction = RadioField('Measure Directionality', True: 'Positive', False: 'Negative')
+    location = StringField('Location', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+    def __init__(self, original_username, *args, **kwargs):
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.original_username = original_username
 
 
 class EditProfileForm(FlaskForm):

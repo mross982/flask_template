@@ -1,6 +1,4 @@
-# Welcome to Microblog!
-
-This is an example application featured in my [Flask Mega-Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world). See the tutorial for instructions on how to work with it.
+# Welcome to Carease!
 
 Like most Flask extensions, you need to create an instance right after the Flask application is created. 
 

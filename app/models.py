@@ -78,17 +78,20 @@ def load_user(id):
 
 
 class Measure(db.Model):
+    '''
+    Also think about historical data (bool), number of years (int), table of numerator / denominator for each year
+    '''
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(140))
     # timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
-    unit = db.Column(db.String(20)) # individuals or encounters
+    individual_unit = db.Column(db.Boolean()) # individuals or encounters 
     start_date = db.Column(db.DateTime) # for the overall measure
     end_date = db.Column(db.DateTime)
-    direction = db.Column(db.String(20)) # positive or negative
+    positive_direction = db.Column(db.Boolean()) # positive or negative 
     location = db.Column(db.String(140))
-    benchmark = db.relationship('Benchmark', backref='measure', lazy='dynamic')
+    benchmarks = db.relationship('Benchmark', backref='measure', lazy='dynamic')
     data = db.relationship('Data', backref='measure', lazy='dynamic')
 
 
