@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, MeasureSetupForm
 from app.models import User, Measure, Benchmark, Data
 from app.forms import ResetPasswordRequestForm, ResetPasswordForm
 from app.email import send_password_reset_email
@@ -127,7 +127,7 @@ def register():
 @app.route('/measure_setup', methods=['GET', 'POST'])
 @login_required
 def measure_setup():
-    form = MeasureSetupForm()
+    form = MeasureSetupForm(current_user.username)
     if form.validate_on_submit():
         measure = Measure(name=form.name.data, user_id=current_user.id, individual_unit=form.individual_unit.data, start_date=form.start_date.data,
             end_date=form.end_date.data, positive_direction=form.positive_direction.data, location=form.location.data)

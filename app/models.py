@@ -86,10 +86,10 @@ class Measure(db.Model):
     # timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
-    individual_unit = db.Column(db.Boolean()) # individuals or encounters 
+    unit = db.Column(db.String(15)) # individuals or encounters 
     start_date = db.Column(db.DateTime) # for the overall measure
     end_date = db.Column(db.DateTime)
-    positive_direction = db.Column(db.Boolean()) # positive or negative 
+    direction = db.Column(db.String(15)) # positive or negative 
     location = db.Column(db.String(140))
     benchmarks = db.relationship('Benchmark', backref='measure', lazy='dynamic')
     data = db.relationship('Data', backref='measure', lazy='dynamic')
