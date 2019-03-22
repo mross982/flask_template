@@ -40,6 +40,20 @@ class MeasureSetupForm(FlaskForm):
     start_date = DateField('Measurement Period Start Date', format='%Y-%m-%d')
     end_date = DateField('Measurement Period End Date', format='%Y-%m-%d')
     positive_direction = RadioField('Measure Directionality', choices=[('Positive', 'Positive'), ('Negative','Negative')])
+    submit = SubmitField('Set up benchmarks')
+
+    def __init__(self, original_username, *args, **kwargs):
+        super(MeasureSetupForm, self).__init__(*args, **kwargs)
+        self.original_username = original_username
+
+
+class MeasureBenchmarksForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    individual_unit = RadioField('Unit of Measure', choices=[('Individuals', 'Individuals'), ('Encounters', 'Encounters')])
+    start_date = DateField('Measurement Period Start Date', format='%Y-%m-%d')
+    end_date = DateField('Measurement Period End Date', format='%Y-%m-%d')
+    positive_direction = RadioField('Measure Directionality', choices=[('Positive', 'Positive'), ('Negative','Negative')])
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Set up benchmarks')
 

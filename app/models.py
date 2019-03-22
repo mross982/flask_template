@@ -14,14 +14,6 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     measures = db.relationship('Measure', backref='user', lazy='dynamic')
-    # posts = db.relationship('Post', backref='author', lazy='dynamic')
-    # about_me = db.Column(db.String(140))
-    # last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    # followed = db.relationship(
-    #     'User', secondary=followers,
-    #     primaryjoin=(followers.c.follower_id == id),
-    #     secondaryjoin=(followers.c.followed_id == id),
-    #     backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -83,16 +75,17 @@ class Measure(db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(140))
-    # timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
     unit = db.Column(db.String(15)) # individuals or encounters 
     start_date = db.Column(db.DateTime) # for the overall measure
     end_date = db.Column(db.DateTime)
     direction = db.Column(db.String(15)) # positive or negative 
-    location = db.Column(db.String(140))
     benchmarks = db.relationship('Benchmark', backref='measure', lazy='dynamic')
     data = db.relationship('Data', backref='measure', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Measure {}>'.format(self.name)
 
 
 class Benchmark(db.Model):
@@ -100,7 +93,6 @@ class Benchmark(db.Model):
     measure_id = db.Column(db.Integer, db.ForeignKey('measure.id'))
     benchmark = db.Column(db.Integer)
     value = db.Column(db.Integer)
-
 
 
 class Data(db.Model):

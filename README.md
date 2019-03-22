@@ -1,5 +1,12 @@
 # Welcome to Carease!
 
+flask migrate: Add the following option to prevent errors 
+def run_migrations_online():
+    context.configure(connection=connection,
+                      target_metadata=target_metadata,
+                      process_revision_directives=process_revision_directives,
+                      render_as_batch=True, ***** Add This Option ********
+
 Like most Flask extensions, you need to create an instance right after the Flask application is created. 
 
 It is always best to move the application logic away from view functions and into models or other auxiliary classes or modules, because as you will see later in this chapter, that makes unit testing much easier.

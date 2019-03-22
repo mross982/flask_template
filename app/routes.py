@@ -88,8 +88,6 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        # SCAFFOLDING
-        # user = {'username', 'Michael'}
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
@@ -129,7 +127,7 @@ def measure_setup():
     form = MeasureSetupForm(current_user.username)
     if form.validate_on_submit():
         measure = Measure(name=form.name.data, user_id=current_user.id, individual_unit=form.individual_unit.data, start_date=form.start_date.data,
-            end_date=form.end_date.data, positive_direction=form.positive_direction.data, location=form.location.data)
+            end_date=form.end_date.data, positive_direction=form.positive_direction.data)
         db.session.add(measure)
         db.session.commit()
         flash('Measure Added!')

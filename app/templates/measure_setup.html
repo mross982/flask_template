@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Register</h1>
+    <h1>{{ title }}</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
@@ -36,13 +36,6 @@
             {{ form.positive_direction.label }}<br>
             {{ form.positive_direction(size=32) }}<br>
             {% for error in form.positive_direction.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.location.label }}<br>
-            {{ form.location(size=32) }}<br>
-            {% for error in form.location.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
