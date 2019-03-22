@@ -12,9 +12,9 @@
             {% endfor %}
         </p>
         <p>
-            {{ form.individual_unit.label }}<br>
-            {{ form.individual_unit(size=64) }}<br>
-            {% for error in form.individual_unit.errors %}
+            {{ form.unit.label }}<br>
+            {{ form.unit(size=64) }}<br>
+            {% for error in form.unit.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
@@ -33,9 +33,9 @@
             {% endfor %}
         </p>
         <p>
-            {{ form.positive_direction.label }}<br>
-            {{ form.positive_direction(size=32) }}<br>
-            {% for error in form.positive_direction.errors %}
+            {{ form.direction.label }}<br>
+            {{ form.direction(size=32) }}<br>
+            {% for error in form.direction.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>

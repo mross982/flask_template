@@ -1,0 +1,11 @@
+testing the db
+
+1. create fake data.
+>>> m = Measure(name="Diabetic Foot Exam", unit="Individuals", direction="Positive")
+>>> db.session.add(m)
+>>> db.session.commit()
+
+2. test fake data.
+>>> measures = Measure.query.all()
+>>> for m in measures:
+...     print(m.id, m.user.username, m.unit)

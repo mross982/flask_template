@@ -34,12 +34,12 @@ class RegistrationForm(FlaskForm):
 
 
 class MeasureSetupForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    # username = StringField('Username', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
-    individual_unit = RadioField('Unit of Measure', choices=[('Individuals', 'Individuals'), ('Encounters', 'Encounters')])
-    start_date = DateField('Measurement Period Start Date', format='%Y-%m-%d')
-    end_date = DateField('Measurement Period End Date', format='%Y-%m-%d')
-    positive_direction = RadioField('Measure Directionality', choices=[('Positive', 'Positive'), ('Negative','Negative')])
+    unit = RadioField('Unit of Measure', choices=[('Individuals', 'Individuals'), ('Encounters', 'Encounters')], validators=[DataRequired()])
+    start_date = DateField('Measurement Period Start Date', format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField('Measurement Period End Date', format='%Y-%m-%d', validators=[DataRequired()])
+    direction = RadioField('Measure Directionality', choices=[('Positive', 'Positive'), ('Negative','Negative')], validators=[DataRequired()])
     submit = SubmitField('Set up benchmarks')
 
     def __init__(self, original_username, *args, **kwargs):

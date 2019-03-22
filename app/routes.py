@@ -126,12 +126,14 @@ def register():
 def measure_setup():
     form = MeasureSetupForm(current_user.username)
     if form.validate_on_submit():
-        measure = Measure(name=form.name.data, user_id=current_user.id, individual_unit=form.individual_unit.data, start_date=form.start_date.data,
-            end_date=form.end_date.data, positive_direction=form.positive_direction.data)
+        print('form loaded 2/3!')
+        measure = Measure(name=form.name.data, user_id=current_user.id, unit=form.unit.data, start_date=form.start_date.data,
+            end_date=form.end_date.data, direction=form.direction.data)
         db.session.add(measure)
         db.session.commit()
         flash('Measure Added!')
         return redirect(url_for('index'))
+    print(form.errors)
     return render_template('measure_setup.html', title='Set up a Measure', form=form)
 
 '''

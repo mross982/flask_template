@@ -85,7 +85,7 @@ class Measure(db.Model):
     data = db.relationship('Data', backref='measure', lazy='dynamic')
 
     def __repr__(self):
-        return '<Measure {}>'.format(self.name)
+        return '<Measure: {}>'.format(self.name)
 
 
 class Benchmark(db.Model):
