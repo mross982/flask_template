@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, MeasureSetupForm
+from app.forms import LoginForm, RegistrationForm, MeasureSetupForm, BenchmarksForm
 from app.models import User, Measure, Benchmark, Data
 from app.forms import ResetPasswordRequestForm, ResetPasswordForm
 from app.email import send_password_reset_email
@@ -126,15 +126,23 @@ def register():
 def measure_setup():
     form = MeasureSetupForm(current_user.username)
     if form.validate_on_submit():
-        print('form loaded 2/3!')
         measure = Measure(name=form.name.data, user_id=current_user.id, unit=form.unit.data, start_date=form.start_date.data,
             end_date=form.end_date.data, direction=form.direction.data)
         db.session.add(measure)
         db.session.commit()
         flash('Measure Added!')
-        return redirect(url_for('index'))
+        return redirect(url_for('benchmarks', measurename=measure.name))
     print(form.errors)
     return render_template('measure_setup.html', title='Set up a Measure', form=form)
+
+@app.route('/benchmarks/<measurename>')
+@login_required
+def benchmarks(measurename):
+    form = BenchmarksForm(measurename)
+    if form.validate_on_submit():
+        print(form.value.data)
+        return redirect(url_for('/index'))
+    return render_template('benchmarks.html', title=measurename, form=form)
 
 '''
 When a route has a dynamic component (e.g. <>), Flask will accept any text in that portion 

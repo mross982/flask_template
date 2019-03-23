@@ -74,7 +74,7 @@ class Measure(db.Model):
     Also think about historical data (bool), number of years (int), table of numerator / denominator for each year
     '''
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(140))
+    name = db.Column(db.String(140), unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
     unit = db.Column(db.String(15)) # individuals or encounters 
@@ -93,6 +93,9 @@ class Benchmark(db.Model):
     measure_id = db.Column(db.Integer, db.ForeignKey('measure.id'))
     benchmark = db.Column(db.Integer)
     value = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Benchmark: {} {}'.format(self.benchmark, self.value)
 
 
 class Data(db.Model):
