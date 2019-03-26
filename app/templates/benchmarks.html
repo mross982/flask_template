@@ -1,18 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ title }} Benchmarks</h1>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div>
+                    <h1>{{ title }} Measure Benchmarks</h1>
+                    <p>Enter every performance benchmark that applies to your measure and its associated financial value. The value can be either positive for incentives or negative for penalties. Also, if your value based purchase agreement pays for progress toward your benchmark (e.g. 1/4 of the incentive is earned for achieving each quartile of the benchmark performance rate), please enter each incremental achievment rate and value as its own benchmark.</p>
+                </div>
+            </div>
+        </div>
+    </section>
     <form action="" method="post">
         {{ form.hidden_tag() }}
-
-        {% for field in form %}
-            <p>
-            {{ field.label }}<br>
-            {{ field(size=32) }}<br>
-            {% for error in field.erros %}
+        <tr>
+            <td>{{ form.benchmark(size=32) }}<td>
+            {% for error in form.benchmark.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-            </p>
-        {% endfor %}
+        </tr>
+        <p>{{ form.submit() }}</p>
     </form>
 {% endblock %}
+

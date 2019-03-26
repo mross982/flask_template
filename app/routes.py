@@ -7,6 +7,7 @@ from app.forms import LoginForm, RegistrationForm, MeasureSetupForm, BenchmarksF
 from app.models import User, Measure, Benchmark, Data
 from app.forms import ResetPasswordRequestForm, ResetPasswordForm
 from app.email import send_password_reset_email
+import sys
 
 '''
 These routes are know as the view function
@@ -124,24 +125,31 @@ def register():
 @app.route('/measure_setup', methods=['GET', 'POST'])
 @login_required
 def measure_setup():
-    form = MeasureSetupForm(current_user.username)
+    form = MeasureSetupForm()
     if form.validate_on_submit():
         measure = Measure(name=form.name.data, user_id=current_user.id, unit=form.unit.data, start_date=form.start_date.data,
             end_date=form.end_date.data, direction=form.direction.data)
         db.session.add(measure)
         db.session.commit()
-        flash('Measure Added!')
+        
         return redirect(url_for('benchmarks', measurename=measure.name))
     print(form.errors)
     return render_template('measure_setup.html', title='Set up a Measure', form=form)
 
-@app.route('/benchmarks/<measurename>')
+
+@app.route('/benchmarks/<measurename>', methods=['GET', 'POST'])
 @login_required
 def benchmarks(measurename):
-    form = BenchmarksForm(measurename)
+    form = BenchmarksForm()
     if form.validate_on_submit():
-        print(form.value.data)
-        return redirect(url_for('/index'))
+        measure = Measure.query.filter_by(name=measurename).first_or_404()
+        for entry in form.benchmark.entries:
+            n_bm = Benchmark(measure_id=measure.id, benchmark=entry.data['benchmark'], value=entry.data['value'])
+            db.session.add(n_bm)
+            db.session.commit()
+        flash('New Measure Successfully Added!')
+        return redirect(url_for('index'))
+    print(form.errors)
     return render_template('benchmarks.html', title=measurename, form=form)
 
 '''
@@ -150,30 +158,21 @@ of the URL, and will invoke the view function with the actual text as an argumen
 example, if the client browser requests URL /user/susan, the view function is going to be 
 called with the argument username set to 'susan'. 
 '''
-@app.route('/user/<username>')
+@app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
-    # SCAFOLDING
-    # user = User.query.filter_by(username=username).first_or_404() # sends a 404 if no match
-    # # other query options include .first() and .all()
-    # # returns user object with attributes of field names in the database
-    # posts = [
-    #     {'author': user, 'body': 'Test post #1'},
-    #     {'author': user, 'body': 'Test post #2'}
-    # ]
-    # # posts = User.query.
-    # return render_template('user.html', user=user, posts=posts)
-
     user = User.query.filter_by(username=username).first_or_404()
-    page = request.args.get('page', 1, type=int)
-    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page, app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('user', username=user.username, page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('user', username=user.username, page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template('user.html', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+    measures = Measure.query.filter_by(user_id=user.id).all()
+    return render_template('user.html', user=user.username, measures=measures)
+
+
+
+
+
+
+
+
+
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])

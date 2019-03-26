@@ -1,10 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-    TextAreaField, RadioField, DecimalField, FieldList, IntegerField
-from wtforms.fields.html5 import DateField  
+    TextAreaField, RadioField, DecimalField, FieldList, IntegerField, FormField, \
+    FloatField
+from wtforms.fields.html5 import DateField 
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
-    Length
+    Length, NumberRange, Optional
 from app.models import User
+import config
 
 
 class LoginForm(FlaskForm):
@@ -42,21 +44,15 @@ class MeasureSetupForm(FlaskForm):
     direction = RadioField('Measure Directionality', choices=[('Positive', 'Positive'), ('Negative','Negative')], validators=[DataRequired()])
     submit = SubmitField('Set up benchmarks')
 
-    def __init__(self, original_username, *args, **kwargs):
-        super(MeasureSetupForm, self).__init__(*args, **kwargs)
-        self.original_username = original_username
 
+class BenchmarksSubForm(FlaskForm):
+    benchmark = FloatField('Performance Rate', validators=[Optional(), NumberRange(0,1)], filters=[lambda x: x or None])
+    value = FloatField('Value', validators=[Optional()],filters=[lambda x: x or None])
 
 class BenchmarksForm(FlaskForm):
     # add FieldList to combine multiple instances of the same field
-    benchmark = FieldList(DecimalField('Benchmark rate', places=4, validators=[DataRequired()]), min_entries=1, max_entries=10)
-    value = IntegerField('Value', validators=[DataRequired()])
-    submit = SubmitField('Set up benchmarks')
-
-    def __init__(self, original_username, *args, **kwargs):
-        super(BenchmarksForm, self).__init__(*args, **kwargs)
-        self.original_username = original_username
-
+    benchmark = FieldList(FormField(BenchmarksSubForm), min_entries=config.benchmark_entry_fields)
+    submit = SubmitField('Submit')
 
 class EditProfileForm(FlaskForm):
     '''
