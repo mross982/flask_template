@@ -4,16 +4,24 @@
     <table>
         <tr valign="top">
             <td>
-                <h1> {{ user }}</h1>
-
-                <p><a href="{{ url_for('measure_setup') }}">Create New Measure</a></p>
+                <h1>{{ user.username }}</h1>
             </td>
         </tr>
     </table>
-    <hr>
-        <h2> Current Measures</h2>
-        {% for measure in measures %}
-            <p>{{ measure.name }}</p>
-        {% endfor %}
+    <h2> Current Measures</h2>
+    {% for measure in measures %}
+        <table>
+            <tr>
+                <th> 
+                    <p>{{ measure.name }}</p>
+                </th>
+                <th>
+                    <button action="{{ url_for('delete_measure', measure=measure) }}">Delete</button>
+                    <a href="{{ url_for('delete_measure', measure= measure) }}">Delete</a>
+                </th>
+            </tr>
+        </table>
+    {% endfor %}
 
 {% endblock %}
+

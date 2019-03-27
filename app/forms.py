@@ -54,6 +54,17 @@ class BenchmarksForm(FlaskForm):
     benchmark = FieldList(FormField(BenchmarksSubForm), min_entries=config.benchmark_entry_fields)
     submit = SubmitField('Submit')
 
+
+
+
+
+
+
+
+
+#**************** Extra Code ***************************************
+
+
 class EditProfileForm(FlaskForm):
     '''
     The implementation is in a custom validation method, but there is an overloaded 
