@@ -54,6 +54,9 @@ class BenchmarksForm(FlaskForm):
     benchmark = FieldList(FormField(BenchmarksSubForm), min_entries=config.benchmark_entry_fields)
     submit = SubmitField('Submit')
 
+class WarningForm(FlaskForm ):
+    delete = SubmitField('Delete Measure')
+    save = SubmitField('Return')
 
 
 

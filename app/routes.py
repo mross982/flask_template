@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, MeasureSetupForm, BenchmarksForm
+from app.forms import LoginForm, RegistrationForm, MeasureSetupForm, BenchmarksForm, WarningForm 
 from app.models import User, Measure, Benchmark, Data
 from app.forms import ResetPasswordRequestForm, ResetPasswordForm
 from app.email import send_password_reset_email
@@ -117,9 +117,13 @@ def benchmarks(measurename):
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     measures = Measure.query.filter_by(user_id=user.id).all()
-
     return render_template('user.html', user=user, measures=measures)
 
+    # elif request.method=='POST':
+    #     print('Whoo hoo')
+    #     user = User.query.filter_by(username=username).first_or_404()
+    #     measures = Measure.query.filter_by(user_id=user.id).all()
+    #     return render_template('user.html', user=user, measures=measures)
 
 @app.route('/edit_measure/<measure>', methods=['GET', 'POST'])
 @login_required
@@ -128,14 +132,24 @@ def edit_measure(user, measure):
     return render_template('edit_measure.html')
 
 
-
-@app.route('/delete_measure/', methods=['GET','POST'])
+@app.route('/warning/<measure_id>', methods=['GET' ,'POST'])
 @login_required
-def delete_measure(measure):
-    print(measure.name)
-    db.session.delete(measure)
-    db.session.commit()
-    return render_template('user.html')
+def warning(measure_id):
+    form = WarningForm()
+    if request.method == 'POST':
+        if form.delete.data:
+            measure = Measure.query.filter_by(id=measure_id).first_or_404()
+            user = measure.user
+            db.session.delete(measure)
+            db.session.commit()
+            flash("Measure Deleted")
+            return redirect(url_for('user', username=user.username ))
+        else:
+            measure = Measure.query.filter_by(id=measure_id).first_or_404()
+            user = measure.user
+            return redirect(url_for('user', username=user.username))
+    return render_template('warning.html', form=form)
+
 
 
 #*************** Extra Code ************************************************

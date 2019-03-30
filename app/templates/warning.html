@@ -1,0 +1,21 @@
+
+{% block content %}   
+	<html>
+	    <body>
+	        <form method="post" action="">
+	        	<table>
+	            <tr>
+                    <p>Are you sure you want to delete this measure?</p>
+	                <th>
+	                    {{ form.delete }}
+	                </th>
+	                <th>
+	                	{{ form.save }}
+	        		</th>
+	            </tr>
+	        	</table>
+	        		      
+	        </form>
+	    </body>
+	</html>
+{% endblock %}

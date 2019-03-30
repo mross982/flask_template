@@ -4,7 +4,7 @@
     <table>
         <tr valign="top">
             <td>
-                <h1>{{ user.username }}</h1>
+                <h1>Welcome {{ user.username }}</h1>
             </td>
         </tr>
     </table>
@@ -16,8 +16,7 @@
                     <p>{{ measure.name }}</p>
                 </th>
                 <th>
-                    <button action="{{ url_for('delete_measure', measure=measure) }}">Delete</button>
-                    <a href="{{ url_for('delete_measure', measure= measure) }}">Delete</a>
+                    <a href="{{ url_for('warning', measure_id=measure.id) }}">Delete</a>
                 </th>
             </tr>
         </table>
@@ -25,3 +24,7 @@
 
 {% endblock %}
 
+<!-- 
+<button action="{{ url_for('delete_measure', measure=measure) }}">Delete</button>
+<a href="{{ url_for('delete_measure', measure_id= measure.id) }}">Delete</a>
+ -->
