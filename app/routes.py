@@ -81,37 +81,6 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@app.route('/measure_setup', methods=['GET', 'POST'])
-@login_required
-def measure_setup():
-    form = MeasureSetupForm()
-    if form.validate_on_submit():
-        measure = Measure(name=form.name.data, user_id=current_user.id, unit=form.unit.data, start_date=form.start_date.data,
-            end_date=form.end_date.data, direction=form.direction.data)
-        db.session.add(measure)
-        db.session.commit()
-        
-        return redirect(url_for('benchmarks', measurename=measure.name))
-    print(form.errors)
-    return render_template('measure_setup.html', title='Set up a Measure', form=form)
-
-
-@app.route('/benchmarks/<measurename>', methods=['GET', 'POST'])
-@login_required
-def benchmarks(measurename):
-    form = BenchmarksForm()
-    if form.validate_on_submit():
-        measure = Measure.query.filter_by(name=measurename).first_or_404()
-        for entry in form.benchmark.entries:
-            n_bm = Benchmark(measure_id=measure.id, benchmark=entry.data['benchmark'], value=entry.data['value'])
-            db.session.add(n_bm)
-            db.session.commit()
-        flash('New Measure Successfully Added!')
-        return redirect(url_for('index'))
-    print(form.errors)
-    return render_template('benchmarks.html', title=measurename, form=form)
-
-
 @app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
@@ -119,33 +88,100 @@ def user(username):
     measures = Measure.query.filter_by(user_id=user.id).all()
     return render_template('user.html', user=user, measures=measures)
 
-    # elif request.method=='POST':
-    #     print('Whoo hoo')
-    #     user = User.query.filter_by(username=username).first_or_404()
-    #     measures = Measure.query.filter_by(user_id=user.id).all()
-    #     return render_template('user.html', user=user, measures=measures)
 
-@app.route('/edit_measure/<measure>', methods=['GET', 'POST'])
+@app.route('/measure_setup', methods=['GET', 'POST'])
 @login_required
-def edit_measure(user, measure):
-    form = MeasureSetupForm()
-    return render_template('edit_measure.html')
+def measure_setup():
+    measure_form = MeasureSetupForm()
+    benchmark_form = BenchmarksForm()
+    if benchmark_form.validate_on_submit():
+        measure = Measure(name=measure_form.name.data, user_id=current_user.id, unit=measure_form.unit.data, start_date=measure_form.start_date.data,
+            end_date=measure_form.end_date.data, direction=measure_form.direction.data)
+        db.session.add(measure)
+        db.session.commit()
+        measure = Measure.query.filter_by(name=measure_form.name.data).first_or_404()
+        for entry in benchmark_form.benchmarks.entries:
+            if entry.data['benchmark'] == None:
+                break
+            else:
+                n_bm = Benchmark(measure_id=measure.id, benchmark=entry.data['benchmark'], value=entry.data['value'])
+                db.session.add(n_bm)
+        db.session.commit()
+        
+        return redirect(url_for('user', username=current_user.username))
+    print(measure_form.errors)
+    print(benchmark_form.errors)
+    return render_template('measure_setup.html', title='Set up a Measure', measure_form=measure_form, benchmark_form=benchmark_form)
 
 
-@app.route('/warning/<measure_id>', methods=['GET' ,'POST'])
+@app.route('/modify_measure/<measurename>', methods=['GET', 'POST'])
 @login_required
-def warning(measure_id):
+def modify_measure(measurename):
+    measure = Measure.query.filter_by(name=measurename).first_or_404()
+    benchmarks = Benchmark.query.filter_by(measure_id=measure.id).all()
+    measure_form = MeasureSetupForm(obj=measure)
+    benchmark_form = BenchmarksForm(obj=benchmarks)
+    if request.method == 'POST':
+        measure.name=form.name.data
+        measure.unit=form.unit.data
+        measure.start_date=form.start_date.data
+        measure.end_date=form.end_date.data
+        measure.direction=form.direction.data
+        for benchmark in benchmarks:
+            for entry in benchmark_form.benchmarks.entries:
+                if entry.data['id'] == benchmark.id:
+                    benchmark.benchmark = entry.data['benchmark']
+                    benchmark.value = entry.data['value']
+        db.session.commit()
+        return redirect(url_for('user', username=current_user.username))
+    
+    return render_template('measure_setup.html', title='Modify your Measure', measure_form=measure_form, benchmark_form=benchmark_form)
+
+
+@app.route('/modify_benchmarks/<measurename>', methods=['GET', 'POST'])
+@login_required
+def modify_benchmark(measurename):
+    measure = Measure.query.filter_by(name=measurename).first_or_404()
+    benchmarks = Benchmark.query.filter_by(measure_id=measure.id).all()
+    form = BenchmarksForm(obj=benchmarks)
+    if request.method == 'POST':
+        measure = Measure.query.filter_by(name=measurename).first_or_404()
+        user = measure.user
+        # for attr in dir(form.benchmark.entries):
+        #     try:
+        #         print("obj.%s = %r" % (attr, getattr(form.benchmark.entries, attr)))
+        #     except:
+        #         pass
+        for attr in form.benchmark.entries:
+            print(attr)
+            break
+        # for entry in form.benchmark.entries:
+        #     print(entry.data['benchmark'])
+            # n_bm = Benchmark(measure_id=measure.id, benchmark=entry.data['benchmark'], value=entry.data['value'])
+            # db.session.commit()
+        flash('Measure Successfully Updated!')
+        return redirect(url_for('user', username=user.username))
+    print(form.errors)
+    return render_template('benchmarks.html', title=measure.name, form=form)
+
+
+@app.route('/warning/<measurename>', methods=['GET' ,'POST'])
+@login_required
+def warning(measurename):
     form = WarningForm()
     if request.method == 'POST':
         if form.delete.data:
-            measure = Measure.query.filter_by(id=measure_id).first_or_404()
+            measure = Measure.query.filter_by(name=measurename).first_or_404()
+            benchmarks = Benchmark.query.filter_by(measure_id=measure.id).all()
             user = measure.user
             db.session.delete(measure)
+            for b_mark in benchmarks:
+                db.session.delete(b_mark)
             db.session.commit()
             flash("Measure Deleted")
             return redirect(url_for('user', username=user.username ))
         else:
-            measure = Measure.query.filter_by(id=measure_id).first_or_404()
+            measure = Measure.query.filter_by(name=measurename).first_or_404()
             user = measure.user
             return redirect(url_for('user', username=user.username))
     return render_template('warning.html', form=form)

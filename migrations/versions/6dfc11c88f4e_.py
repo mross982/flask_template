@@ -1,8 +1,8 @@
-"""inital migration
+"""empty message
 
-Revision ID: cbe08411c11b
+Revision ID: 6dfc11c88f4e
 Revises: 
-Create Date: 2019-03-19 21:48:40.410704
+Create Date: 2019-04-02 20:43:02.189443
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cbe08411c11b'
+revision = '6dfc11c88f4e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,14 +31,13 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=140), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('language', sa.String(length=5), nullable=True),
     sa.Column('unit', sa.String(length=15), nullable=True),
     sa.Column('start_date', sa.DateTime(), nullable=True),
     sa.Column('end_date', sa.DateTime(), nullable=True),
     sa.Column('direction', sa.String(length=15), nullable=True),
-    sa.Column('location', sa.String(length=140), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('benchmark',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -51,12 +50,10 @@ def upgrade():
     op.create_table('data',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('measure_id', sa.Integer(), nullable=True),
-    sa.Column('start_date', sa.DateTime(), nullable=True),
-    sa.Column('end_date', sa.DateTime(), nullable=True),
-    sa.Column('individuals', sa.Integer(), nullable=True),
-    sa.Column('encounters', sa.Integer(), nullable=True),
-    sa.Column('numerator', sa.Integer(), nullable=True),
-    sa.Column('denominator', sa.Integer(), nullable=True),
+    sa.Column('encounter_id', sa.Integer(), nullable=True),
+    sa.Column('encounter_date', sa.DateTime(), nullable=True),
+    sa.Column('patient_id', sa.Integer(), nullable=True),
+    sa.Column('unique_patient', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['measure_id'], ['measure.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

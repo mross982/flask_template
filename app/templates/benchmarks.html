@@ -13,9 +13,14 @@
     </section>
     <form action="" method="post">
         {{ form.hidden_tag() }}
+        <br>
         <tr>
-            <td>{{ form.benchmark(size=32) }}<td>
-            {% for error in form.benchmark.errors %}
+            <td>
+                {% for l in form.benchmarks() %}
+                    {{ l.form.label }}
+                {% endfor %}  
+            <td>
+            {% for error in form.benchmarks.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </tr>
@@ -23,3 +28,14 @@
     </form>
 {% endblock %}
 
+<!-- 
+<td>
+    {{ form.benchmarks(size=32) }}
+    {% for l in form.benchmarks() %}
+        {{ l }}
+    {% endfor %}
+<td>
+{% for error in form.benchmarks.errors %}
+<span style="color: red;">[{{ error }}]</span>
+{% endfor %}
+ -->

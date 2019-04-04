@@ -3,24 +3,21 @@
 {% block content %}
     <table>
         <tr valign="top">
+            <td><img src="{{ user.avatar(72) }}"></td>
             <td>
                 <h1>Welcome {{ user.username }}</h1>
+                <a href="{{ url_for('measure_setup') }}">Create New Measure</a>
             </td>
         </tr>
     </table>
     <h2> Current Measures</h2>
+    {% if measures %}
     {% for measure in measures %}
-        <table>
-            <tr>
-                <th> 
-                    <p>{{ measure.name }}</p>
-                </th>
-                <th>
-                    <a href="{{ url_for('warning', measure_id=measure.id) }}">Delete</a>
-                </th>
-            </tr>
-        </table>
+        {% include '_measure.html' %}
     {% endfor %}
+    {% else %}
+        <p> You have no measures </p>
+    {% endif %}
 
 {% endblock %}
 

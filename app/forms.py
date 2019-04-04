@@ -35,6 +35,11 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 
+class BenchmarksSubForm(FlaskForm):
+    benchmark = FloatField('Performance Rate', validators=[Optional()], filters=[lambda x: x or None])
+    value = FloatField('Value          $', validators=[Optional()],filters=[lambda x: x or None])
+
+
 class MeasureSetupForm(FlaskForm):
     # username = StringField('Username', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
@@ -42,16 +47,14 @@ class MeasureSetupForm(FlaskForm):
     start_date = DateField('Measurement Period Start Date', format='%Y-%m-%d', validators=[DataRequired()])
     end_date = DateField('Measurement Period End Date', format='%Y-%m-%d', validators=[DataRequired()])
     direction = RadioField('Measure Directionality', choices=[('Positive', 'Positive'), ('Negative','Negative')], validators=[DataRequired()])
-    submit = SubmitField('Set up benchmarks')
+    # benchmarks = FieldList(FormField(BenchmarksSubForm), min_entries=config.benchmark_entry_fields)
+    # submit = SubmitField('Complete')
 
-
-class BenchmarksSubForm(FlaskForm):
-    benchmark = FloatField('Performance Rate', validators=[Optional(), NumberRange(0,1)], filters=[lambda x: x or None])
-    value = FloatField('Value', validators=[Optional()],filters=[lambda x: x or None])
 
 class BenchmarksForm(FlaskForm):
     # add FieldList to combine multiple instances of the same field
-    benchmark = FieldList(FormField(BenchmarksSubForm), min_entries=config.benchmark_entry_fields)
+    name = StringField('Benchmarks')
+    benchmarks = FieldList(FormField(BenchmarksSubForm), min_entries=config.benchmark_entry_fields)
     submit = SubmitField('Submit')
 
 class WarningForm(FlaskForm ):
