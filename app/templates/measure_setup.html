@@ -39,9 +39,16 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>
-            {{ benchmark_form.benchmarks() }}
-        </p>
+        <div>
+            <p>Enter every performance benchmark that applies to your measure and its associated financial value. The value can be either positive for incentives or negative for penalties. Also, if your value based purchase agreement pays for progress toward your benchmark (e.g. 1/4 of the incentive is earned for achieving each quartile of the benchmark performance rate), please enter each incremental achievment rate and value as its own benchmark.</p>
+            <p>
+                {#{{ benchmark_form.benchmarks() }}#}
+                {% for i in benchmark_form.benchmarks %}
+                    <h3><p align="left">Benchmark {{ loop.index }}</p></h3>
+                    {{ i }}
+                {% endfor %}
+            </p>
+        </div>
         <p>{{ benchmark_form.submit() }}</p>
     </form>
 {% endblock %}

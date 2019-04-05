@@ -111,6 +111,7 @@ def measure_setup():
         return redirect(url_for('user', username=current_user.username))
     print(measure_form.errors)
     print(benchmark_form.errors)
+
     return render_template('measure_setup.html', title='Set up a Measure', measure_form=measure_form, benchmark_form=benchmark_form)
 
 
@@ -120,49 +121,18 @@ def modify_measure(measurename):
     measure = Measure.query.filter_by(name=measurename).first_or_404()
     benchmarks = Benchmark.query.filter_by(measure_id=measure.id).all()
     measure_form = MeasureSetupForm(obj=measure)
-    benchmark_form = BenchmarksForm(obj=benchmarks)
+    benchmark_form = BenchmarksForm.populate_form(measure.id)
     if request.method == 'POST':
         measure.name=form.name.data
         measure.unit=form.unit.data
         measure.start_date=form.start_date.data
         measure.end_date=form.end_date.data
         measure.direction=form.direction.data
-        for benchmark in benchmarks:
-            for entry in benchmark_form.benchmarks.entries:
-                if entry.data['id'] == benchmark.id:
-                    benchmark.benchmark = entry.data['benchmark']
-                    benchmark.value = entry.data['value']
+
         db.session.commit()
         return redirect(url_for('user', username=current_user.username))
     
     return render_template('measure_setup.html', title='Modify your Measure', measure_form=measure_form, benchmark_form=benchmark_form)
-
-
-@app.route('/modify_benchmarks/<measurename>', methods=['GET', 'POST'])
-@login_required
-def modify_benchmark(measurename):
-    measure = Measure.query.filter_by(name=measurename).first_or_404()
-    benchmarks = Benchmark.query.filter_by(measure_id=measure.id).all()
-    form = BenchmarksForm(obj=benchmarks)
-    if request.method == 'POST':
-        measure = Measure.query.filter_by(name=measurename).first_or_404()
-        user = measure.user
-        # for attr in dir(form.benchmark.entries):
-        #     try:
-        #         print("obj.%s = %r" % (attr, getattr(form.benchmark.entries, attr)))
-        #     except:
-        #         pass
-        for attr in form.benchmark.entries:
-            print(attr)
-            break
-        # for entry in form.benchmark.entries:
-        #     print(entry.data['benchmark'])
-            # n_bm = Benchmark(measure_id=measure.id, benchmark=entry.data['benchmark'], value=entry.data['value'])
-            # db.session.commit()
-        flash('Measure Successfully Updated!')
-        return redirect(url_for('user', username=user.username))
-    print(form.errors)
-    return render_template('benchmarks.html', title=measure.name, form=form)
 
 
 @app.route('/warning/<measurename>', methods=['GET' ,'POST'])

@@ -5,7 +5,8 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
 from wtforms.fields.html5 import DateField 
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length, NumberRange, Optional
-from app.models import User
+from app.models import User, Benchmark
+from werkzeug.datastructures import MultiDict
 import config
 
 
@@ -53,9 +54,28 @@ class MeasureSetupForm(FlaskForm):
 
 class BenchmarksForm(FlaskForm):
     # add FieldList to combine multiple instances of the same field
-    name = StringField('Benchmarks')
     benchmarks = FieldList(FormField(BenchmarksSubForm), min_entries=config.benchmark_entry_fields)
     submit = SubmitField('Submit')
+
+    def populate_form(measure_id):
+        benchmarks = Benchmark.query.filter_by(measure_id=measure_id).all()
+        benchmark_form = BenchmarksForm()
+        while len(benchmark_form.benchmarks) > 0:
+            benchmark_form.benchmarks.pop_entry()
+        for benchmark in benchmarks:
+            b_data = dict()
+            b_data['benchmark'] = benchmark.benchmark
+            b_data['value'] = benchmark.value
+            benchmark_form.benchmarks.append_entry(b_data)
+
+        # add blank fields to min number:
+        while len(benchmark_form.benchmarks) < 6:
+            b_data = dict()
+            b_data['benchmark'] = ''
+            b_data['value'] = ''
+            benchmark_form.benchmarks.append_entry(b_data)
+        
+        return benchmark_form
 
 class WarningForm(FlaskForm ):
     delete = SubmitField('Delete Measure')
